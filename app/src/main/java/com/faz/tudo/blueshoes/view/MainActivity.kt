@@ -47,11 +47,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         replaceFragment( fragment )
     }
 
-    private fun getFragment( fragmentId: Long ) =
-        when( fragmentId ){
+    private fun getFragment( fragId: Long ): Fragment{
+        return when( fragId ){
             R.id.item_about.toLong() -> AboutFragment()
+            R.id.item_contact.toLong() -> ContactFragment()
             else -> AboutFragment()
         }
+    }
 
     private fun replaceFragment( fragment: Fragment){
         supportFragmentManager
@@ -71,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val user = User(
         "Lucas Sousa",
         R.drawable.user,
-        false
+        true
     )
     lateinit var navMenuItems : List<NavMenuItem>
     lateinit var selectNavMenuItems: SelectionTracker<Long>
