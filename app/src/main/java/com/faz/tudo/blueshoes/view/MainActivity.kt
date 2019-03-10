@@ -3,6 +3,7 @@ package com.faz.tudo.blueshoes.view
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -26,6 +27,43 @@ import kotlinx.android.synthetic.main.nav_header_user_not_logged.*
 import kotlinx.android.synthetic.main.nav_menu.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    companion object {
+        const val FRAGMENT_TAG = "frag-tag"
+    }
+
+    private fun initFragment(){
+        val supFrag = supportFragmentManager
+        var fragment = supFrag.findFragmentByTag( FRAGMENT_TAG )
+
+        /*
+         * Se não for uma reconstrução de atividade, então não
+         * haverá um fragmento em memória, então busca-se o
+         * inicial.
+         * */
+        if( fragment == null ){
+            fragment = getFragment( R.id.item_about.toLong() )
+        }
+
+        replaceFragment( fragment )
+    }
+
+    private fun getFragment( fragmentId: Long ) =
+        when( fragmentId ){
+            R.id.item_about.toLong() -> AboutFragment()
+            else -> AboutFragment()
+        }
+
+    private fun replaceFragment( fragment: Fragment){
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fl_fragment_container,
+                fragment,
+                FRAGMENT_TAG
+            )
+            .commit()
+    }
+
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -54,6 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+        initFragment()
     }
 
     override fun onBackPressed() {
@@ -195,6 +234,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         override fun onItemStateChanged(
             key: Long,
             selected: Boolean ) {
+
             super.onItemStateChanged( key, selected )
 
             if( !selected ){
@@ -203,10 +243,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             callbackRemoveSelection()
 
-            /*
-             * TODO: Mudança de Fragment
-             * */
+
+            val fragment = getFragment( key )
+            replaceFragment( fragment )
+
             drawer_layout.closeDrawer( GravityCompat.START )
         }
+    }
+
+    fun updateToolbarTitleInFragment( titleStringId: Int ){
+        toolbar.title = getString( titleStringId )
     }
 }
